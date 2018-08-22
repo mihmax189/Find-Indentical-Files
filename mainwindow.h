@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QString>
 
 namespace Ui {
 class MainWindow;
@@ -16,6 +17,12 @@ public:
 
 private:
   Ui::MainWindow *ui;
+
+  QString firstDirectory;
+  QString secondDirectory;
+
+private slots:
+  void folderExplorerSlot();
 };
 
 #endif // MAINWINDOW_H
