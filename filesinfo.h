@@ -41,10 +41,9 @@ class FilesInfo
         return files.values();
     }
 
-    QString getName(const QString& key)
+    QList<QString> getName(const QString& key)
     {
-        auto name = files.find(key);
-        return name.value();
+        return files.values(key);
     }
 
   private:
