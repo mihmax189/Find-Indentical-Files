@@ -1,0 +1,7 @@
+*.o
+moc_*
+folder_comparison.pro.user
+folder_comparison
+Makefile
+.qmake.stash
+ui_mainwindow.h
