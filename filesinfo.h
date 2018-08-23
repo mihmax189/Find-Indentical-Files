@@ -51,4 +51,7 @@ class FilesInfo
     QMultiHash<QString, QString> files;
 };
 
+// произвести операцию пересечения двух листов
+QList<QString> intersectKeys(const QList<QString>& keys_1, const QList<QString>& keys_2);
+
 #endif  // _FILEINFO_H_
