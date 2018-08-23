@@ -30,7 +30,8 @@ SOURCES += \
 
 HEADERS += \
         mainwindow.h \
-        workerthread.h \        
+        workerthread.h \
+        binaryfilescompare.h \
         filesinfo.h \
 
 FORMS += \
