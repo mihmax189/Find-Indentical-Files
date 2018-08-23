@@ -26,10 +26,12 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
         workerthread.cpp \
+        filesinfo.cpp \
 
 HEADERS += \
         mainwindow.h \
-        workerthread.h \
+        workerthread.h \        
+        filesinfo.h \
 
 FORMS += \
         mainwindow.ui
