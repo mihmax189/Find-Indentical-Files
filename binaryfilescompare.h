@@ -30,6 +30,7 @@ class BinaryFileComparison : public QThread
     QByteArray secondBuffer;
 
     bool error_open;
+    int id;
 
     void readFirstFile()
     {
@@ -74,17 +75,17 @@ class BinaryFileComparison : public QThread
     }
 
   signals:
-    void end();
-    void result(bool);
+    void result(const QString& first_name, const QString& second_name, int id, bool res);
 
   public:
-    BinaryFileComparison(QString _firstName, QString _secondName, QObject* parent = nullptr)
+    BinaryFileComparison(QString _firstName, QString _secondName, int _id, QObject* parent = nullptr)
       : QThread(parent)
       , error_open(false)
     {
         if (_firstName.isNull() || _firstName.isEmpty() || _secondName.isNull() || _secondName.isEmpty())
             return;
 
+        id = _id;
         firstFileName = _firstName;
         secondFileName = _secondName;
     }
@@ -97,8 +98,7 @@ class BinaryFileComparison : public QThread
         readSecondFile();
         bool res = compare();
 
-        emit result(res);
-        emit end();
+        emit result(firstFileName, secondFileName, id, res);
     }
 };
 
