@@ -8,7 +8,12 @@
 
 #include <QByteArray>
 #include <QFile>
+#include <QMutex>
 #include <QThread>
+#include <QWaitCondition>
+
+static QWaitCondition countsThreadIsNotFull;
+static QMutex mutex;
 
 class BinaryFileComparison : public QThread
 {
@@ -20,6 +25,10 @@ class BinaryFileComparison : public QThread
     Q_OBJECT
 
   private:
+    static int currentCountsTread;
+    const int COUNTS_THREADS;
+
+    // состояние, когда количество потоков выполняющихся на данный момент меньше COUNT_THREADS
     QString firstFileName;
     QString secondFileName;
 
@@ -80,6 +89,7 @@ class BinaryFileComparison : public QThread
   public:
     BinaryFileComparison(QString _firstName, QString _secondName, int _id, QObject* parent = nullptr)
       : QThread(parent)
+      , COUNTS_THREADS(10)
       , error_open(false)
     {
         if (_firstName.isNull() || _firstName.isEmpty() || _secondName.isNull() || _secondName.isEmpty())
@@ -90,15 +100,29 @@ class BinaryFileComparison : public QThread
         secondFileName = _secondName;
     }
 
-    ~BinaryFileComparison() {}
+    ~BinaryFileComparison()
+    {
+        mutex.lock();
+        currentCountsTread--;
+        if (currentCountsTread < COUNTS_THREADS)
+            countsThreadIsNotFull.wakeAll();
+        mutex.unlock();
+    }
 
     void run()
     {
+        mutex.lock();
+        // ограничиваемся 10 одновременно выполняемыми потоками
+        while (currentCountsTread >= COUNTS_THREADS)
+            countsThreadIsNotFull.wait(&mutex);
+        currentCountsTread++;
+
         readFirstFile();
         readSecondFile();
         bool res = compare();
 
         emit result(firstFileName, secondFileName, id, res);
+        mutex.unlock();
     }
 };
 

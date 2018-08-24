@@ -26,6 +26,7 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
         workerthread.cpp \
+	binaryfilescompare.cpp \
         filesinfo.cpp \
 
 HEADERS += \
