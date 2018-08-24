@@ -7,10 +7,17 @@
 MainWindow::MainWindow(QWidget* parent)
   : QMainWindow(parent)
   , ui(new Ui::MainWindow)
+  , firstDirectory(QString())
+  , secondDirectory(QString())
 {
     ui->setupUi(this);
 
+    firstFinder = nullptr;
+    secondFinder = nullptr;
+
     flag_intersect = 0;
+
+    connect(ui->scanningButton, SIGNAL(clicked()), SLOT(scanningButtonClocked()));
     connect(ui->choiceFolderLeft, SIGNAL(clicked()), SLOT(folderExplorerSlot()));
     connect(ui->choiceFolderRight, SIGNAL(clicked()), SLOT(folderExplorerSlot()));
     connect(this, SIGNAL(compare()), this, SLOT(compareFiles()));
@@ -32,53 +39,58 @@ void MainWindow::folderExplorerSlot()
     firstDirectory = QFileDialog::getExistingDirectory(
             this, tr("Выбрать папку"), "C:", QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
 #endif
+    if (path.isEmpty() || path.isNull())
+    {
+        ui->textEdit->append("Папка не выбрана");
+        return;
+    }
 
     if (ui->choiceFolderLeft == qobject_cast<QPushButton*>(sender()))
     {
         firstDirectory = path;
         ui->showPathToFolderLeft->setText(firstDirectory);
         firstFinder = new FinderThread(this);
-        connect(firstFinder, SIGNAL(end()), this, SLOT(freeFirstFinder()));
+
         firstFinder->setDir(QDir(firstDirectory));
-        firstFinder->start();
     }
     else if (ui->choiceFolderRight == qobject_cast<QPushButton*>(sender()))
     {
         secondDirectory = path;
         ui->showPathToFolderRight->setText(secondDirectory);
         secondFinder = new FinderThread(this);
-        connect(secondFinder, SIGNAL(end()), this, SLOT(freeSecondFinder()));
         secondFinder->setDir(QDir(secondDirectory));
-        secondFinder->start();
     }
 }
 
 void MainWindow::freeFirstFinder()
 {
     // данный слот вызывается по завершении работы первого потока, который ищет все файлы, в первой выбранной папке
-    firstFinder->getFilesInfo(firstFilesInfo);
+    firstFilesInfo = firstFinder->getFilesInfo();
     QList<QString> keys = firstFilesInfo.getSizes();
 
     if (++flag_intersect == 2)
         emit compare();
 
+    qDebug() << "freeFirstFinder";
     delete firstFinder;
 }
 
 void MainWindow::freeSecondFinder()
 {
     // данный слот вызывается по завершении работы второго потока, который ищет все файлы, во второй выбранной папке
-    secondFinder->getFilesInfo(secondFilesInfo);
+    secondFilesInfo = secondFinder->getFilesInfo();
     QList<QString> keys = secondFilesInfo.getSizes();
 
     if (++flag_intersect == 2)
         emit compare();
 
+    qDebug() << "freeSecondFinder";
     delete secondFinder;
 }
 
 void MainWindow::compareFiles()
 {
+    qDebug() << "compareFiles";
     // если указанные папки пустые - выходим
     if (firstFilesInfo.getNames().isEmpty() || secondFilesInfo.getNames().isEmpty())
         return;
@@ -124,4 +136,29 @@ void MainWindow::RES(const QString& firstName, const QString& secondName, int id
     }
 
     delete processesCompare[id];
+    processesCompare.remove(id);
+
+    if (processesCompare.isEmpty())
+    {
+        // очищаем все исходные данные по выполнению работы, для следующего запуска поиска идентичных файлов
+        qDebug() << "DEBUG: processesCompare is empty!";
+        firstFilesInfo = FilesInfo();
+        secondFilesInfo = FilesInfo();
+
+        firstFinder = nullptr;
+        secondFinder = nullptr;
+    }
+}
+
+void MainWindow::scanningButtonClicked()
+{
+    if (firstFinder == nullptr || secondFinder == nullptr)
+        return;
+
+    connect(firstFinder, SIGNAL(end()), this, SLOT(freeFirstFinder()));
+    connect(secondFinder, SIGNAL(end()), this, SLOT(freeSecondFinder()));
+
+    firstFinder->start();
+    secondFinder->start();
+    ui->textEdit->append("scannnnnning!");
 }

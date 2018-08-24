@@ -60,7 +60,18 @@
      </layout>
     </item>
     <item>
-     <widget class="QTextEdit" name="textEdit"/>
+     <widget class="QPushButton" name="scanningButton">
+      <property name="text">
+       <string>Сканировать папки</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QTextEdit" name="textEdit">
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>
