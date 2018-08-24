@@ -66,6 +66,15 @@ void MainWindow::freeFirstFinder()
 {
     // данный слот вызывается по завершении работы первого потока, который ищет все файлы, в первой выбранной папке
     firstFilesInfo = firstFinder->getFilesInfo();
+
+    if (firstFilesInfo.isEmpty())
+    {
+        ui->textEdit->append(QString("Выбранная папка %1 пустая. Выберети другую.").arg(firstDirectory));
+        firstDirectory = QString();
+        firstFinder = nullptr;
+        return;
+    }
+
     QList<QString> keys = firstFilesInfo.getSizes();
 
     if (++flag_intersect == 2)
@@ -79,6 +88,15 @@ void MainWindow::freeSecondFinder()
 {
     // данный слот вызывается по завершении работы второго потока, который ищет все файлы, во второй выбранной папке
     secondFilesInfo = secondFinder->getFilesInfo();
+
+    if (secondFilesInfo.isEmpty())
+    {
+        ui->textEdit->append(QString("Выбранная папка %1 пустая. Выберети другую.").arg(secondDirectory));
+        secondDirectory = QString();
+        secondFinder = nullptr;
+        return;
+    }
+
     QList<QString> keys = secondFilesInfo.getSizes();
 
     if (++flag_intersect == 2)
