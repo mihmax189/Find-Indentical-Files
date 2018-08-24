@@ -56,7 +56,7 @@ class MainWindow : public QMainWindow
     void RES(const QString& firstName, const QString& secondName, int id, bool res);
 
     void compareFiles();
-    void scanningButtonClocked();
+    void scanningButtonClicked();
 
   signals:
     void compare();

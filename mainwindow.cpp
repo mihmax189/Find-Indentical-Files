@@ -17,7 +17,7 @@ MainWindow::MainWindow(QWidget* parent)
 
     flag_intersect = 0;
 
-    connect(ui->scanningButton, SIGNAL(clicked()), SLOT(scanningButtonClocked()));
+    connect(ui->scanningButton, SIGNAL(clicked()), SLOT(scanningButtonClicked()));
     connect(ui->choiceFolderLeft, SIGNAL(clicked()), SLOT(folderExplorerSlot()));
     connect(ui->choiceFolderRight, SIGNAL(clicked()), SLOT(folderExplorerSlot()));
     connect(this, SIGNAL(compare()), this, SLOT(compareFiles()));
@@ -147,12 +147,16 @@ void MainWindow::RES(const QString& firstName, const QString& secondName, int id
 
         firstFinder = nullptr;
         secondFinder = nullptr;
+
+        firstDirectory = QString();
+        secondDirectory = QString();
     }
 }
 
 void MainWindow::scanningButtonClicked()
 {
-    if (firstFinder == nullptr || secondFinder == nullptr)
+    if (firstFinder == nullptr || secondFinder == nullptr || firstDirectory.isEmpty() || firstDirectory.isNull() ||
+        secondDirectory.isEmpty() || secondDirectory.isNull())
         return;
 
     connect(firstFinder, SIGNAL(end()), this, SLOT(freeFirstFinder()));
