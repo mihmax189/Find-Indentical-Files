@@ -168,6 +168,8 @@ void MainWindow::RES(const QString& firstName, const QString& secondName, int id
 
         firstDirectory = QString();
         secondDirectory = QString();
+
+        ui->textEdit->append("Сканирование завершено. Выберети две новых папки");
     }
 }
 
@@ -182,5 +184,5 @@ void MainWindow::scanningButtonClicked()
 
     firstFinder->start();
     secondFinder->start();
-    ui->textEdit->append("scannnnnning!");
+    ui->textEdit->append("Началось сканирование!");
 }
