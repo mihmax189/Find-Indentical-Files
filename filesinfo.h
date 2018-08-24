@@ -46,6 +46,11 @@ class FilesInfo
         return files.values(key);
     }
 
+    bool isEmpty() const
+    {
+        return files.isEmpty();
+    }
+
   private:
     QMultiHash<QString, QString> files;
 };
