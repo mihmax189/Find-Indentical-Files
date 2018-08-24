@@ -32,7 +32,7 @@ class FinderThread : public QThread
     void run();
     // получить ссылку на директорию, в которой надо произвести поиск
     void setDir(const QDir& dir);
-    void getFilesInfo(FilesInfo& filesInfo);
+    FilesInfo getFilesInfo();
 
   private:
     // директоря, в которой надо производить поиск

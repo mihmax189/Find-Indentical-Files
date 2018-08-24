@@ -46,7 +46,7 @@ void FinderThread::run()
     emit end();
 }
 
-void FinderThread::getFilesInfo(FilesInfo& fileInfo)
+FilesInfo FinderThread::getFilesInfo()
 {
-    fileInfo = _filesInfo;
+    return _filesInfo;
 }
